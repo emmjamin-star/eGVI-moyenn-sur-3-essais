@@ -80,7 +80,14 @@ if uploaded_files:
     data2 = acq2['data']['points']
     data3 = acq3['data']['points']
 
-if st.button("Lancer le calcul du score FAPS"):
+    # Valeur population contrôle Arnaud Gouelle
+    cn = [0.80, 0.93, 0.92, 0.90, 0.89, 0.73, 0.82, 0.85, 0.86, 0.90]
+    cn = np.array(cn)
+    m_ln_CTRL = 1.386573
+    sd_ln_CTRL = 0.619334
+    Projection_CTRL = 20.38
+
+if st.button("Lancer le calcul du score eGVI"):
     try:
          # Extraction des coordonnées
         a1, a2, b1, b2, c1, c2 = markersStat[:,labelsStat.index('LASI'),:][0, 0], markersStat[:,labelsStat.index('LANK'),:][0, 0], markersStat[:,labelsStat.index('LASI'),:][1, 0], markersStat[:,labelsStat.index('LANK'),:][1, 0], markersStat[:,labelsStat.index('LASI'),:][2, 0], markersStat[:,labelsStat.index('LANK'),:][2, 0]
