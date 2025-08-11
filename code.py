@@ -8,22 +8,12 @@ from scipy.interpolate import interp1d
 from sklearn.preprocessing import MinMaxScaler
 import tempfile
 
-st.set_page_config(page_title="Score FAPS", layout="centered")
-st.title("🦿 Score FAPS - Interface interactive")
+st.set_page_config(page_title="Score eGVI", layout="centered")
+st.title("🦿 Score eGVI - Interface interactive")
 
 # 1. Upload des fichiers .c3d
 st.header("1. Importer un ou plusieurs fichiers .c3d dont au moins un fichier d'essai statique et un d'essai dynamique")
 uploaded_files = st.file_uploader("Choisissez un ou plusieurs fichiers .c3d", type="c3d", accept_multiple_files=True)
-st.header("2. Indiquer le score allant de 0 (aucune aide à la marche) à 5 (participant totalement dépendant) pour les aides ambulatoire et les dispositifs d'assistances")
-df = pd.DataFrame({'Score' : [0,1,2,3,4,5]})
-
-AmbulatoryAids = st.selectbox(
-    "Pour l'aide ambulatoire :",
-    df['Score'])
-    
-AssistiveDevice = st.selectbox(
-    "Pour le dispositif d'assistance :",
-    df['Score'])
 
 if uploaded_files:
     selected_file_statique = st.selectbox("Choisissez un fichier statique pour l'analyse", uploaded_files, format_func=lambda x: x.name)
