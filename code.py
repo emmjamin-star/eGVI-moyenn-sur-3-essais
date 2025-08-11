@@ -44,6 +44,7 @@ if uploaded_files:
     n_frames1 = acq1['data']['points'].shape[2]
     time_offset1 = first_frame1 / freq1
     time1 = np.arange(n_frames1) / freq1 + time_offset1
+    error_acq1 = False
 
     acq2 = ezc3d.c3d(tmp2_path)  # acquisition dynamique
     labels2 = acq2['parameters']['POINT']['LABELS']['value']
@@ -52,6 +53,7 @@ if uploaded_files:
     n_frames2 = acq2['data']['points'].shape[2]
     time_offset2 = first_frame2 / freq2
     time2 = np.arange(n_frames2) / freq2 + time_offset2
+    error_acq2 = False
 
     acq3 = ezc3d.c3d(tmp3_path)  # acquisition dynamique
     labels3 = acq3['parameters']['POINT']['LABELS']['value']
@@ -60,6 +62,7 @@ if uploaded_files:
     n_frames3 = acq3['data']['points'].shape[2]
     time_offset3 = first_frame3 / freq3
     time3 = np.arange(n_frames3) / freq3 + time_offset3
+    error_acq3 = False
     
     statique = ezc3d.c3d(tmp_path)  # acquisition statique
     labelsStat = statique['parameters']['POINT']['LABELS']['value']
