@@ -456,6 +456,7 @@ if st.button("Lancer le calcul du score eGVI"):
               ln_sujet_D1 = np.log(Diff_Sujet_CTRL_D21)
         
           # z gauche
+          z_G1 = []  
           if ln_sujet_G1 < -m_ln_CTRL :
               z_G1 = (ln_sujet_G1 + m_ln_CTRL) / sd_ln_CTRL
         
@@ -466,6 +467,7 @@ if st.button("Lancer le calcul du score eGVI"):
               z_G1 = 0
         
           # z droit
+          z_D1 = []  
           if ln_sujet_D1 < -m_ln_CTRL :
               z_D1 = (ln_sujet_D1 + m_ln_CTRL) / sd_ln_CTRL
         
@@ -697,7 +699,7 @@ if st.button("Lancer le calcul du score eGVI"):
               ln_sujet_D2 = np.log(Diff_Sujet_CTRL_D22)
         
           # z gauche
-        
+          z_G2 = []  
           if ln_sujet_G2 < -m_ln_CTRL :
               z_G2 = (ln_sujet_G2 + m_ln_CTRL) / sd_ln_CTRL
         
@@ -708,7 +710,7 @@ if st.button("Lancer le calcul du score eGVI"):
               z_G2 = 0
         
           # z droit
-        
+          z_D2 = []  
           if ln_sujet_D2 < -m_ln_CTRL :
               z_D2 = (ln_sujet_D2 + m_ln_CTRL) / sd_ln_CTRL
         
@@ -940,7 +942,7 @@ if st.button("Lancer le calcul du score eGVI"):
               ln_sujet_D3 = np.log(Diff_Sujet_CTRL_D23)
         
           # z gauche
-        
+          z_G3 = []
           if ln_sujet_G3 < -m_ln_CTRL :
               z_G3 = (ln_sujet_G3 + m_ln_CTRL) / sd_ln_CTRL
         
@@ -951,7 +953,7 @@ if st.button("Lancer le calcul du score eGVI"):
               z_G3 = 0
         
           # z droit
-        
+          z_D3 = []
           if ln_sujet_D3 < -m_ln_CTRL :
               z_D3 = (ln_sujet_D3 + m_ln_CTRL) / sd_ln_CTRL
         
