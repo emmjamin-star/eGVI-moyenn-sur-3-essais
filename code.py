@@ -314,15 +314,15 @@ if st.button("Lancer le calcul du score eGVI"):
           pLPas_Dm1 = []
           pVitesse_Dm1 = []
           pSA_Dm1 = []
-          if len(DPas_D1) == 3:
-            for i in [0, 1, 2] :
+          if len(PA_D1) < len(DPas_D1) : 
+            for i in range(0,len(PA_D1),1) :
               pPA_Dm1.append(PA_D1[i] * 100 / PA_D_m1)
               pDPas_Dm1.append(DPas_D1[i] * 100 / DPas_D_m1)
               pLPas_Dm1.append(LPas_D1[i] * 100 / LPas_D_m1)
               pVitesse_Dm1.append(Vitesse_D1[i] * 100 / Vitesse_D_m1)
               pSA_Dm1.append(SA_D1[i] * 100 / SA_D_m1)
-          elif len(DPas_D1) == 2 :
-            for i in [0,1] :
+          else : 
+            for i in range(0,len(DPas_D1),1) :
               pPA_Dm1.append(PA_D1[i] * 100 / PA_D_m1)
               pDPas_Dm1.append(DPas_D1[i] * 100 / DPas_D_m1)
               pLPas_Dm1.append(LPas_D1[i] * 100 / LPas_D_m1)
@@ -336,15 +336,15 @@ if st.button("Lancer le calcul du score eGVI"):
           Vitesse_D_f1 = []
           SA_D_f1 = []
         
-          if len(pPA_Dm1) == 3 :
-            for i in [0, 1]:
+          if len(PA_D1) < len(DPas_D1) :
+            for i in range(0,len(PA_D1)-1,1) :
               PA_D_f1.append(np.abs(pPA_Dm1[i+1] - pPA_Dm1[i]))
               DPas_D_f1.append(np.abs(pDPas_Dm1[i+1] - pDPas_Dm1[i]))
               LPas_D_f1.append(np.abs(pLPas_Dm1[i+1] - pLPas_Dm1[i]))
               Vitesse_D_f1.append(np.abs(pVitesse_Dm1[i+1] - pVitesse_Dm1[i]))
               SA_D_f1.append(np.abs(pSA_Dm1[i+1] - pSA_Dm1[i]))
-          elif len(pPA_Dm1) == 2 :
-            for i in [0] :
+          else : 
+            for i in range(0,len(DPas_D1)-1,1) :
               PA_D_f1.append(np.abs(pPA_Dm1[i+1] - pPA_Dm1[i]))
               DPas_D_f1.append(np.abs(pDPas_Dm1[i+1] - pDPas_Dm1[i]))
               LPas_D_f1.append(np.abs(pLPas_Dm1[i+1] - pLPas_Dm1[i]))
@@ -364,15 +364,15 @@ if st.button("Lancer le calcul du score eGVI"):
           pLPas_Gm1 = []
           pVitesse_Gm1 = []
           pSA_Gm1 = []
-          if len(DPas_G1) == 3 :
-            for i in [0, 1, 2] :
+          if len(PA_G1) < len(DPas_G1) : 
+            for i in range(0,len(PA_G1),1) :
               pPA_Gm1.append(PA_G1[i] * 100 / PA_G_m1)
               pDPas_Gm1.append(DPas_G1[i] * 100 / DPas_G_m1)
               pLPas_Gm1.append(LPas_G1[i] * 100 / LPas_G_m1)
               pVitesse_Gm1.append(Vitesse_G1[i] * 100 / Vitesse_G_m1)
               pSA_Gm1.append(SA_G1[i] * 100 / SA_G_m1)
-          elif len(DPas_G1) == 2 :
-            for i in [0,1] :
+          else : 
+            for i in range(0,len(DPas_G1),1) :
               pPA_Gm1.append(PA_G1[i] * 100 / PA_G_m1)
               pDPas_Gm1.append(DPas_G1[i] * 100 / DPas_G_m1)
               pLPas_Gm1.append(LPas_G1[i] * 100 / LPas_G_m1)
@@ -386,15 +386,15 @@ if st.button("Lancer le calcul du score eGVI"):
           Vitesse_G_f1 = []
           SA_G_f1 = []
         
-          if len(pPA_Gm1) == 3 :
-            for i in [0, 1]:
+          if len(PA_G1) < len(DPas_G1) :
+            for i in range(0,len(PA_G1)-1,1) :
               PA_G_f1.append(np.abs(pPA_Gm1[i+1] - pPA_Gm1[i]))
               DPas_G_f1.append(np.abs(pDPas_Gm1[i+1] - pDPas_Gm1[i]))
               LPas_G_f1.append(np.abs(pLPas_Gm1[i+1] - pLPas_Gm1[i]))
               Vitesse_G_f1.append(np.abs(pVitesse_Gm1[i+1] - pVitesse_Gm1[i]))
               SA_G_f1.append(np.abs(pSA_Gm1[i+1] - pSA_Gm1[i]))
-          elif len(pPA_Gm1) == 2 :
-            for i in [0] :
+          else : 
+            for i in range(0,len(DPas_G1)-1,1) :
               PA_G_f1.append(np.abs(pPA_Gm1[i+1] - pPA_Gm1[i]))
               DPas_G_f1.append(np.abs(pDPas_Gm1[i+1] - pDPas_Gm1[i]))
               LPas_G_f1.append(np.abs(pLPas_Gm1[i+1] - pLPas_Gm1[i]))
@@ -557,15 +557,15 @@ if st.button("Lancer le calcul du score eGVI"):
           pLPas_Dm2 = []
           pVitesse_Dm2 = []
           pSA_Dm2 = []
-          if len(DPas_D2) == 3:
-            for i in [0, 1, 2] :
+          if len(PA_D2) < len(DPas_D2) : 
+            for i in range(0,len(PA_D2),1) :
               pPA_Dm2.append(PA_D2[i] * 100 / PA_D_m2)
               pDPas_Dm2.append(DPas_D2[i] * 100 / DPas_D_m2)
               pLPas_Dm2.append(LPas_D2[i] * 100 / LPas_D_m2)
               pVitesse_Dm2.append(Vitesse_D2[i] * 100 / Vitesse_D_m2)
               pSA_Dm2.append(SA_D2[i] * 100 / SA_D_m2)
-          elif len(DPas_D2) == 2 :
-            for i in [0,1] :
+          else : 
+            for i in range(0,len(DPas_D2),1) :
               pPA_Dm2.append(PA_D2[i] * 100 / PA_D_m2)
               pDPas_Dm2.append(DPas_D2[i] * 100 / DPas_D_m2)
               pLPas_Dm2.append(LPas_D2[i] * 100 / LPas_D_m2)
@@ -579,15 +579,15 @@ if st.button("Lancer le calcul du score eGVI"):
           Vitesse_D_f2 = []
           SA_D_f2 = []
         
-          if len(pPA_Dm2) == 3 :
-            for i in [0, 1]:
+          if len(PA_D2) < len(DPas_D2) :
+            for i in range(0,len(PA_D2)-1,1) :
               PA_D_f2.append(np.abs(pPA_Dm2[i+1] - pPA_Dm2[i]))
               DPas_D_f2.append(np.abs(pDPas_Dm2[i+1] - pDPas_Dm2[i]))
               LPas_D_f2.append(np.abs(pLPas_Dm2[i+1] - pLPas_Dm2[i]))
               Vitesse_D_f2.append(np.abs(pVitesse_Dm2[i+1] - pVitesse_Dm2[i]))
               SA_D_f2.append(np.abs(pSA_Dm2[i+1] - pSA_Dm2[i]))
-          elif len(pPA_Dm2) == 2 :
-            for i in [0] :
+          else : 
+            for i in range(0,len(DPas_D2)-1,1) :
               PA_D_f2.append(np.abs(pPA_Dm2[i+1] - pPA_Dm2[i]))
               DPas_D_f2.append(np.abs(pDPas_Dm2[i+1] - pDPas_Dm2[i]))
               LPas_D_f2.append(np.abs(pLPas_Dm2[i+1] - pLPas_Dm2[i]))
@@ -607,15 +607,15 @@ if st.button("Lancer le calcul du score eGVI"):
           pLPas_Gm2 = []
           pVitesse_Gm2 = []
           pSA_Gm2 = []
-          if len(DPas_G2) == 3 :
-            for i in [0, 1, 2] :
+          if len(PA_G2) < len(DPas_G2) : 
+            for i in range(0,len(PA_G2),1) :
               pPA_Gm2.append(PA_G2[i] * 100 / PA_G_m2)
               pDPas_Gm2.append(DPas_G2[i] * 100 / DPas_G_m2)
               pLPas_Gm2.append(LPas_G2[i] * 100 / LPas_G_m2)
               pVitesse_Gm2.append(Vitesse_G2[i] * 100 / Vitesse_G_m2)
               pSA_Gm2.append(SA_G2[i] * 100 / SA_G_m2)
-          elif len(DPas_G2) == 2 :
-            for i in [0,1] :
+          else : 
+            for i in range(0,len(DPas_G2),1) :
               pPA_Gm2.append(PA_G2[i] * 100 / PA_G_m2)
               pDPas_Gm2.append(DPas_G2[i] * 100 / DPas_G_m2)
               pLPas_Gm2.append(LPas_G2[i] * 100 / LPas_G_m2)
@@ -629,15 +629,15 @@ if st.button("Lancer le calcul du score eGVI"):
           Vitesse_G_f2 = []
           SA_G_f2 = []
         
-          if len(pPA_Gm2) == 3 :
-            for i in [0, 1]:
+          if len(PA_G2) < len(DPas_G2) :
+            for i in range(0,len(PA_G2)-1,1) :
               PA_G_f2.append(np.abs(pPA_Gm2[i+1] - pPA_Gm2[i]))
               DPas_G_f2.append(np.abs(pDPas_Gm2[i+1] - pDPas_Gm2[i]))
               LPas_G_f2.append(np.abs(pLPas_Gm2[i+1] - pLPas_Gm2[i]))
               Vitesse_G_f2.append(np.abs(pVitesse_Gm2[i+1] - pVitesse_Gm2[i]))
               SA_G_f2.append(np.abs(pSA_Gm2[i+1] - pSA_Gm2[i]))
-          elif len(pPA_Gm2) == 2 :
-            for i in [0] :
+          else : 
+            for i in range(0,len(DPas_G2)-1,1) :
               PA_G_f2.append(np.abs(pPA_Gm2[i+1] - pPA_Gm2[i]))
               DPas_G_f2.append(np.abs(pDPas_Gm2[i+1] - pDPas_Gm2[i]))
               LPas_G_f2.append(np.abs(pLPas_Gm2[i+1] - pLPas_Gm2[i]))
@@ -800,15 +800,15 @@ if st.button("Lancer le calcul du score eGVI"):
           pLPas_Dm3 = []
           pVitesse_Dm3 = []
           pSA_Dm3 = []
-          if len(DPas_D3) == 3:
-            for i in [0, 1, 2] :
+          if len(PA_D3) < len(DPas_D3) : 
+            for i in range(0,len(PA_D3),1) :
               pPA_Dm3.append(PA_D3[i] * 100 / PA_D_m3)
               pDPas_Dm3.append(DPas_D3[i] * 100 / DPas_D_m3)
               pLPas_Dm3.append(LPas_D3[i] * 100 / LPas_D_m3)
               pVitesse_Dm3.append(Vitesse_D3[i] * 100 / Vitesse_D_m3)
               pSA_Dm3.append(SA_D3[i] * 100 / SA_D_m3)
-          elif len(DPas_D3) == 2 :
-            for i in [0,1] :
+          else : 
+            for i in range(0,len(DPas_D3),1) :
               pPA_Dm3.append(PA_D3[i] * 100 / PA_D_m3)
               pDPas_Dm3.append(DPas_D3[i] * 100 / DPas_D_m3)
               pLPas_Dm3.append(LPas_D3[i] * 100 / LPas_D_m3)
@@ -822,15 +822,15 @@ if st.button("Lancer le calcul du score eGVI"):
           Vitesse_D_f3 = []
           SA_D_f3 = []
         
-          if len(pPA_Dm3) == 3 :
-            for i in [0, 1]:
+          if len(PA_D3) < len(DPas_D3) :
+            for i in range(0,len(PA_D3)-1,1) :
               PA_D_f3.append(np.abs(pPA_Dm3[i+1] - pPA_Dm3[i]))
               DPas_D_f3.append(np.abs(pDPas_Dm3[i+1] - pDPas_Dm3[i]))
               LPas_D_f3.append(np.abs(pLPas_Dm3[i+1] - pLPas_Dm3[i]))
               Vitesse_D_f3.append(np.abs(pVitesse_Dm3[i+1] - pVitesse_Dm3[i]))
               SA_D_f3.append(np.abs(pSA_Dm3[i+1] - pSA_Dm3[i]))
-          elif len(pPA_Dm3) == 2 :
-            for i in [0] :
+          else : 
+            for i in range(0,len(DPas_D3)-1,1) :
               PA_D_f3.append(np.abs(pPA_Dm3[i+1] - pPA_Dm3[i]))
               DPas_D_f3.append(np.abs(pDPas_Dm3[i+1] - pDPas_Dm3[i]))
               LPas_D_f3.append(np.abs(pLPas_Dm3[i+1] - pLPas_Dm3[i]))
@@ -850,15 +850,15 @@ if st.button("Lancer le calcul du score eGVI"):
           pLPas_Gm3 = []
           pVitesse_Gm3 = []
           pSA_Gm3 = []
-          if len(DPas_G3) == 3 :
-            for i in [0, 1, 2] :
+          if len(PA_G3) < len(DPas_G3) : 
+            for i in range(0,len(PA_G3),1) :
               pPA_Gm3.append(PA_G3[i] * 100 / PA_G_m3)
               pDPas_Gm3.append(DPas_G3[i] * 100 / DPas_G_m3)
               pLPas_Gm3.append(LPas_G3[i] * 100 / LPas_G_m3)
               pVitesse_Gm3.append(Vitesse_G3[i] * 100 / Vitesse_G_m3)
               pSA_Gm3.append(SA_G3[i] * 100 / SA_G_m3)
-          elif len(DPas_G3) == 2 :
-            for i in [0,1] :
+          else : 
+            for i in range(0,len(DPas_G3),1) :
               pPA_Gm3.append(PA_G3[i] * 100 / PA_G_m3)
               pDPas_Gm3.append(DPas_G3[i] * 100 / DPas_G_m3)
               pLPas_Gm3.append(LPas_G3[i] * 100 / LPas_G_m3)
@@ -872,15 +872,15 @@ if st.button("Lancer le calcul du score eGVI"):
           Vitesse_G_f3 = []
           SA_G_f3 = []
         
-          if len(pPA_Gm3) == 3 :
-            for i in [0, 1]:
+          if len(PA_G3) < len(DPas_G3) :
+            for i in range(0,len(PA_G3)-1,1) :
               PA_G_f3.append(np.abs(pPA_Gm3[i+1] - pPA_Gm3[i]))
               DPas_G_f3.append(np.abs(pDPas_Gm3[i+1] - pDPas_Gm3[i]))
               LPas_G_f3.append(np.abs(pLPas_Gm3[i+1] - pLPas_Gm3[i]))
               Vitesse_G_f3.append(np.abs(pVitesse_Gm3[i+1] - pVitesse_Gm3[i]))
               SA_G_f3.append(np.abs(pSA_Gm3[i+1] - pSA_Gm3[i]))
-          elif len(pPA_Gm3) == 2 :
-            for i in [0] :
+          else : 
+            for i in range(0,len(DPas_G3),1) :
               PA_G_f3.append(np.abs(pPA_Gm3[i+1] - pPA_Gm3[i]))
               DPas_G_f3.append(np.abs(pDPas_Gm3[i+1] - pDPas_Gm3[i]))
               LPas_G_f3.append(np.abs(pLPas_Gm3[i+1] - pLPas_Gm3[i]))
