@@ -880,7 +880,7 @@ if st.button("Lancer le calcul du score eGVI"):
               Vitesse_G_f3.append(np.abs(pVitesse_Gm3[i+1] - pVitesse_Gm3[i]))
               SA_G_f3.append(np.abs(pSA_Gm3[i+1] - pSA_Gm3[i]))
           else : 
-            for i in range(0,len(DPas_G3),1) :
+            for i in range(0,len(DPas_G3)-1,1) :
               PA_G_f3.append(np.abs(pPA_Gm3[i+1] - pPA_Gm3[i]))
               DPas_G_f3.append(np.abs(pDPas_Gm3[i+1] - pDPas_Gm3[i]))
               LPas_G_f3.append(np.abs(pLPas_Gm3[i+1] - pLPas_Gm3[i]))
