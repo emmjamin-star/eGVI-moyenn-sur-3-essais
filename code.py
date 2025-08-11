@@ -979,3 +979,6 @@ if st.button("Lancer le calcul du score FAPS"):
         st.markdown("### 📊 Résultats du score eGVI")
         st.write(f"**Score eGVI Moyen** : {eGVI_M:.2f} +/- {STD_eGVI_M}")
         st.write(f"**Lecture du test** : Un individu présentant une marche saine aura un score compris entre 98 et 102. Tout score en-dehors indique une atteinte à la variabilité de la marche.")
+
+    except Exception as e:
+        st.error(f"Erreur pendant l'analyse : {e}")
