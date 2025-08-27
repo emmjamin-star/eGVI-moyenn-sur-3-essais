@@ -968,18 +968,32 @@ if st.button("Lancer le calcul du score eGVI"):
           eGVI3 = (eGVI_D3 + eGVI_G3)/2
         
         Totegvi = []
+        Totegvid = []
+        Totegvig = []
         if error_acq1 == False :
           Totegvi.append(eGVI1)
+          Totegvid.append(eGVI_D1)
+          Totegvig.append(eGVI_G1)
         if error_acq2 == False :
           Totegvi.append(eGVI2)
+          Totegvid.append(eGVI_D2)
+          Totegvig.append(eGVI_G2)
         if error_acq3 == False :
           Totegvi.append(eGVI3)
+          Totegvid.append(eGVI_D3)
+          Totegvig.append(eGVI_G3)
         
         eGVI_M = round(np.mean(Totegvi),2)
         STD_eGVI_M = round(np.std(Totegvi),2)
+        eGVI_D_M = round(np.mean(Totegvid),2)
+        STD_eGVI_D_M = round(np.std(Totegvid),2)
+        eGVI_G_M = round(np.mean(Totegvig),2)
+        STD_eGVI_G_M = round(np.std(Totegvig),2)
 
         st.markdown("### 📊 Résultats du score eGVI")
         st.write(f"**Score eGVI Moyen** : {eGVI_M:.2f} +/- {STD_eGVI_M}")
+        st.write(f"**Score eGVI Moyen jambe droite** : {eGVI_D_M:.2f} +/- {STD_eGVI_D_M}")
+        st.write(f"**Score eGVI Moyen jambe gauche** : {eGVI_G_M:.2f} +/- {STD_eGVI_G_M}")
         st.write(f"**Lecture du test** : Un individu présentant une marche saine aura un score compris entre 98 et 102. Tout score en-dehors indique une atteinte à la variabilité de la marche.")
 
     except Exception as e:
