@@ -447,5 +447,5 @@ if st.button("Lancer le calcul du score eGVI"):
             st.write(f"**Score eGVI** : {eGVI:.2f}")
             st.write(f"**Lecture du test** : Un individu présentant une marche saine aura un score compris entre 98 et 102. Tout score en-dehors indique une atteinte à la variabilité de la marche.")
        
-        except Exception as e:
-            st.error(f"Erreur pendant l'analyse : {e}")
+    except Exception as e:
+        st.error(f"Erreur pendant l'analyse : {e}")
