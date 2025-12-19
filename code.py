@@ -58,7 +58,6 @@ if st.button("Lancer le calcul du score eGVI"):
         Stride_time_G = []
         Stride_velocity_G = []
         Stance_Time_G = []
-        EGVI = []
         
         files = [tmp1_path, tmp2_path, tmp3_path]
         FS = 100
@@ -230,193 +229,193 @@ if st.button("Lancer le calcul du score eGVI"):
             for i in range(start_idx, temp_nb):
                 Stance_Time_G.append(Single_Supp_time_G[i] + Double_Supp_time_G[i])
     
-            # Valeur moyenne droite
-            m_Stride_velocity_D = np.mean(Stride_velocity_D)
-            m_Step_lenght_D = np.mean(Step_lenght_D)
-            m_Step_time_D = np.mean(Step_time_D)
-            m_Single_Supp_time_D = np.mean(Single_Supp_time_D)
-            m_Stance_Time_D = np.mean(Stance_Time_D)
+        # Valeur moyenne droite
+        m_Stride_velocity_D = np.mean(Stride_velocity_D)
+        m_Step_lenght_D = np.mean(Step_lenght_D)
+        m_Step_time_D = np.mean(Step_time_D)
+        m_Single_Supp_time_D = np.mean(Single_Supp_time_D)
+        m_Stance_Time_D = np.mean(Stance_Time_D)
             
-            # En pourcentage de la moyenne
+        # En pourcentage de la moyenne
             
-            pm_Stride_velocity_D = []
-            pm_Step_lenght_D = []
-            pm_Step_time_D = []
-            pm_Single_Supp_time_D =[]
-            pm_Stance_Time_D = []
+        pm_Stride_velocity_D = []
+        pm_Step_lenght_D = []
+        pm_Step_time_D = []
+        pm_Single_Supp_time_D =[]
+        pm_Stance_Time_D = []
             
-            for i in range(len(Stride_velocity_D)) :
-              pm_Stride_velocity_D.append((Stride_velocity_D[i]/m_Stride_velocity_D)*100)
+        for i in range(len(Stride_velocity_D)) :
+            pm_Stride_velocity_D.append((Stride_velocity_D[i]/m_Stride_velocity_D)*100)
             
-            for i in range(len(Step_lenght_D)) :
-              pm_Step_lenght_D.append((Step_lenght_D[i]/m_Step_lenght_D)*100)
+        for i in range(len(Step_lenght_D)) :
+            pm_Step_lenght_D.append((Step_lenght_D[i]/m_Step_lenght_D)*100)
             
-            for i in range(len(Step_time_D)) :
-              pm_Step_time_D.append((Step_time_D[i]/m_Step_time_D)*100)
+        for i in range(len(Step_time_D)) :
+            pm_Step_time_D.append((Step_time_D[i]/m_Step_time_D)*100)
             
-            for i in range(len(Single_Supp_time_D)) :
-              pm_Single_Supp_time_D.append((Single_Supp_time_D[i]/m_Single_Supp_time_D)*100)
+        for i in range(len(Single_Supp_time_D)) :
+            pm_Single_Supp_time_D.append((Single_Supp_time_D[i]/m_Single_Supp_time_D)*100)
             
-            for i in range(len(Stance_Time_D)) :
-              pm_Stance_Time_D.append((Stance_Time_D[i]/m_Stance_Time_D)*100)
+        for i in range(len(Stance_Time_D)) :
+            pm_Stance_Time_D.append((Stance_Time_D[i]/m_Stance_Time_D)*100)
     
-            #Différence absolue droite
-            abs_Stride_velocity_D = []
-            abs_Step_lenght_D = []
-            abs_Step_time_D = []
-            abs_Single_Supp_time_D =[]
-            abs_Stance_Time_D = []
+        #Différence absolue droite
+        abs_Stride_velocity_D = []
+        abs_Step_lenght_D = []
+        abs_Step_time_D = []
+        abs_Single_Supp_time_D =[]
+        abs_Stance_Time_D = []
             
-            for i in range(len(pm_Stride_velocity_D)-1):
-              abs_Stride_velocity_D.append(np.abs(pm_Stride_velocity_D[i+1]-pm_Stride_velocity_D[i]))
+        for i in range(len(pm_Stride_velocity_D)-1):
+            abs_Stride_velocity_D.append(np.abs(pm_Stride_velocity_D[i+1]-pm_Stride_velocity_D[i]))
             
-            for i in range(len(pm_Step_lenght_D)-1):
-              abs_Step_lenght_D.append(np.abs(pm_Step_lenght_D[i+1]-pm_Step_lenght_D[i]))
+        for i in range(len(pm_Step_lenght_D)-1):
+            abs_Step_lenght_D.append(np.abs(pm_Step_lenght_D[i+1]-pm_Step_lenght_D[i]))
             
-            for i in range(len(pm_Step_time_D)-1):
-              abs_Step_time_D.append(np.abs(pm_Step_time_D[i+1]-pm_Step_time_D[i]))
+        for i in range(len(pm_Step_time_D)-1):
+            abs_Step_time_D.append(np.abs(pm_Step_time_D[i+1]-pm_Step_time_D[i]))
             
-            for i in range(len(pm_Single_Supp_time_D)-1):
-              abs_Single_Supp_time_D.append(np.abs(pm_Single_Supp_time_D[i+1]-pm_Single_Supp_time_D[i]))
+        for i in range(len(pm_Single_Supp_time_D)-1):
+            abs_Single_Supp_time_D.append(np.abs(pm_Single_Supp_time_D[i+1]-pm_Single_Supp_time_D[i]))
             
-            for i in range(len(pm_Stance_Time_D)-1):
-              abs_Stance_Time_D.append(np.abs(pm_Stance_Time_D[i+1]-pm_Stance_Time_D[i]))
+        for i in range(len(pm_Stance_Time_D)-1):
+            abs_Stance_Time_D.append(np.abs(pm_Stance_Time_D[i+1]-pm_Stance_Time_D[i]))
             
-            # Moyenne des différences absolues
-            m_abs_Stride_velocity_D = np.mean(abs_Stride_velocity_D)
-            m_abs_Step_lenght_D = np.mean(abs_Step_lenght_D)
-            m_abs_Step_time_D = np.mean(abs_Step_time_D)
-            m_abs_Single_Supp_time_D = np.mean(abs_Single_Supp_time_D)
-            m_abs_Stance_Time_D = np.mean(abs_Stance_Time_D)
+        # Moyenne des différences absolues
+        m_abs_Stride_velocity_D = np.mean(abs_Stride_velocity_D)
+        m_abs_Step_lenght_D = np.mean(abs_Step_lenght_D)
+        m_abs_Step_time_D = np.mean(abs_Step_time_D)
+        m_abs_Single_Supp_time_D = np.mean(abs_Single_Supp_time_D)
+        m_abs_Stance_Time_D = np.mean(abs_Stance_Time_D)
             
-            # Ecart-type des différences absolues
-            et_abs_Stride_velocity_D = np.std(abs_Stride_velocity_D)
-            et_abs_Step_lenght_D = np.std(abs_Step_lenght_D)
-            et_abs_Step_time_D = np.std(abs_Step_time_D)
-            et_abs_Single_Supp_time_D = np.std(abs_Single_Supp_time_D)
-            et_abs_Stance_Time_D = np.std(abs_Stance_Time_D)
+        # Ecart-type des différences absolues
+        et_abs_Stride_velocity_D = np.std(abs_Stride_velocity_D)
+        et_abs_Step_lenght_D = np.std(abs_Step_lenght_D)
+        et_abs_Step_time_D = np.std(abs_Step_time_D)
+        et_abs_Single_Supp_time_D = np.std(abs_Single_Supp_time_D)
+        et_abs_Stance_Time_D = np.std(abs_Stance_Time_D)
     
-            # Valeur moyenne GAUCHE
-            m_Stride_velocity_G = np.mean(Stride_velocity_G)
-            m_Step_lenght_G = np.mean(Step_lenght_G)
-            m_Step_time_G = np.mean(Step_time_G)
-            m_Single_Supp_time_G = np.mean(Single_Supp_time_G)
-            m_Stance_Time_G = np.mean(Stance_Time_G)
+        # Valeur moyenne GAUCHE
+        m_Stride_velocity_G = np.mean(Stride_velocity_G)
+        m_Step_lenght_G = np.mean(Step_lenght_G)
+        m_Step_time_G = np.mean(Step_time_G)
+        m_Single_Supp_time_G = np.mean(Single_Supp_time_G)
+        m_Stance_Time_G = np.mean(Stance_Time_G)
             
-            # En pourcentage de la moyenne GAUCHE
-            pm_Stride_velocity_G = []
-            pm_Step_lenght_G = []
-            pm_Step_time_G = []
-            pm_Single_Supp_time_G = []
-            pm_Stance_Time_G = []
+        # En pourcentage de la moyenne GAUCHE
+        pm_Stride_velocity_G = []
+        pm_Step_lenght_G = []
+        pm_Step_time_G = []
+        pm_Single_Supp_time_G = []
+        pm_Stance_Time_G = []
             
-            for i in range(len(Stride_velocity_G)):
-                pm_Stride_velocity_G.append((Stride_velocity_G[i] / m_Stride_velocity_G) * 100)
+        for i in range(len(Stride_velocity_G)):
+            pm_Stride_velocity_G.append((Stride_velocity_G[i] / m_Stride_velocity_G) * 100)
             
-            for i in range(len(Step_lenght_G)):
-                pm_Step_lenght_G.append((Step_lenght_G[i] / m_Step_lenght_G) * 100)
+        for i in range(len(Step_lenght_G)):
+            pm_Step_lenght_G.append((Step_lenght_G[i] / m_Step_lenght_G) * 100)
             
-            for i in range(len(Step_time_G)):
-                pm_Step_time_G.append((Step_time_G[i] / m_Step_time_G) * 100)
+        for i in range(len(Step_time_G)):
+            pm_Step_time_G.append((Step_time_G[i] / m_Step_time_G) * 100)
             
-            for i in range(len(Single_Supp_time_G)):
-                pm_Single_Supp_time_G.append((Single_Supp_time_G[i] / m_Single_Supp_time_G) * 100)
+        for i in range(len(Single_Supp_time_G)):
+            pm_Single_Supp_time_G.append((Single_Supp_time_G[i] / m_Single_Supp_time_G) * 100)
             
-            for i in range(len(Stance_Time_G)):
-                pm_Stance_Time_G.append((Stance_Time_G[i] / m_Stance_Time_G) * 100)
+        for i in range(len(Stance_Time_G)):
+            pm_Stance_Time_G.append((Stance_Time_G[i] / m_Stance_Time_G) * 100)
     
-            # Différence absolue GAUCHE
-            abs_Stride_velocity_G = []
-            abs_Step_lenght_G = []
-            abs_Step_time_G = []
-            abs_Single_Supp_time_G = []
-            abs_Stance_Time_G = []
+        # Différence absolue GAUCHE
+        abs_Stride_velocity_G = []
+        abs_Step_lenght_G = []
+        abs_Step_time_G = []
+        abs_Single_Supp_time_G = []
+        abs_Stance_Time_G = []
             
-            # Calcul des différences entre cycles successifs (i+1 et i)
-            for i in range(len(pm_Stride_velocity_G)-1):
-                abs_Stride_velocity_G.append(np.abs(pm_Stride_velocity_G[i+1] - pm_Stride_velocity_G[i]))
+        # Calcul des différences entre cycles successifs (i+1 et i)
+        for i in range(len(pm_Stride_velocity_G)-1):
+            abs_Stride_velocity_G.append(np.abs(pm_Stride_velocity_G[i+1] - pm_Stride_velocity_G[i]))
             
-            for i in range(len(pm_Step_lenght_G)-1):
-                abs_Step_lenght_G.append(np.abs(pm_Step_lenght_G[i+1] - pm_Step_lenght_G[i]))
+        for i in range(len(pm_Step_lenght_G)-1):
+            abs_Step_lenght_G.append(np.abs(pm_Step_lenght_G[i+1] - pm_Step_lenght_G[i]))
             
-            for i in range(len(pm_Step_time_G)-1):
-                abs_Step_time_G.append(np.abs(pm_Step_time_G[i+1] - pm_Step_time_G[i]))
+        for i in range(len(pm_Step_time_G)-1):
+            abs_Step_time_G.append(np.abs(pm_Step_time_G[i+1] - pm_Step_time_G[i]))
             
-            for i in range(len(pm_Single_Supp_time_G)-1):
-                abs_Single_Supp_time_G.append(np.abs(pm_Single_Supp_time_G[i+1] - pm_Single_Supp_time_G[i]))
+        for i in range(len(pm_Single_Supp_time_G)-1):
+            abs_Single_Supp_time_G.append(np.abs(pm_Single_Supp_time_G[i+1] - pm_Single_Supp_time_G[i]))
             
-            for i in range(len(pm_Stance_Time_G)-1):
-                abs_Stance_Time_G.append(np.abs(pm_Stance_Time_G[i+1] - pm_Stance_Time_G[i]))
+        for i in range(len(pm_Stance_Time_G)-1):
+            abs_Stance_Time_G.append(np.abs(pm_Stance_Time_G[i+1] - pm_Stance_Time_G[i]))
             
-            # Moyenne des différences absolues GAUCHE
-            m_abs_Stride_velocity_G = np.mean(abs_Stride_velocity_G)
-            m_abs_Step_lenght_G = np.mean(abs_Step_lenght_G)
-            m_abs_Step_time_G = np.mean(abs_Step_time_G)
-            m_abs_Single_Supp_time_G = np.mean(abs_Single_Supp_time_G)
-            m_abs_Stance_Time_G = np.mean(abs_Stance_Time_G)
+        # Moyenne des différences absolues GAUCHE
+        m_abs_Stride_velocity_G = np.mean(abs_Stride_velocity_G)
+        m_abs_Step_lenght_G = np.mean(abs_Step_lenght_G)
+        m_abs_Step_time_G = np.mean(abs_Step_time_G)
+        m_abs_Single_Supp_time_G = np.mean(abs_Single_Supp_time_G)
+        m_abs_Stance_Time_G = np.mean(abs_Stance_Time_G)
             
-            # Ecart-type des différences absolues GAUCHE
-            et_abs_Stride_velocity_G = np.std(abs_Stride_velocity_G)
-            et_abs_Step_lenght_G = np.std(abs_Step_lenght_G)
-            et_abs_Step_time_G = np.std(abs_Step_time_G)
-            et_abs_Single_Supp_time_G = np.std(abs_Single_Supp_time_G)
-            et_abs_Stance_Time_G = np.std(abs_Stance_Time_G)
+        # Ecart-type des différences absolues GAUCHE
+        et_abs_Stride_velocity_G = np.std(abs_Stride_velocity_G)
+        et_abs_Step_lenght_G = np.std(abs_Step_lenght_G)
+        et_abs_Step_time_G = np.std(abs_Step_time_G)
+        et_abs_Single_Supp_time_G = np.std(abs_Single_Supp_time_G)
+        et_abs_Stance_Time_G = np.std(abs_Stance_Time_G)
     
-            # Création des vecteurs droit et gauche
-            Vect_D = [m_abs_Step_lenght_D, m_abs_Step_time_D, m_abs_Stance_Time_D, m_abs_Single_Supp_time_D, m_abs_Stride_velocity_D, et_abs_Step_lenght_D, et_abs_Step_time_D, et_abs_Stance_Time_D, et_abs_Single_Supp_time_D, et_abs_Stride_velocity_D]
-            Vect_G = [m_abs_Step_lenght_G, m_abs_Step_time_G, m_abs_Stance_Time_G, m_abs_Single_Supp_time_G, m_abs_Stride_velocity_G, et_abs_Step_lenght_G, et_abs_Step_time_G, et_abs_Stance_Time_G, et_abs_Single_Supp_time_G, et_abs_Stride_velocity_G]
+        # Création des vecteurs droit et gauche
+        Vect_D = [m_abs_Step_lenght_D, m_abs_Step_time_D, m_abs_Stance_Time_D, m_abs_Single_Supp_time_D, m_abs_Stride_velocity_D, et_abs_Step_lenght_D, et_abs_Step_time_D, et_abs_Stance_Time_D, et_abs_Single_Supp_time_D, et_abs_Stride_velocity_D]
+        Vect_G = [m_abs_Step_lenght_G, m_abs_Step_time_G, m_abs_Stance_Time_G, m_abs_Single_Supp_time_G, m_abs_Stride_velocity_G, et_abs_Step_lenght_G, et_abs_Step_time_G, et_abs_Stance_Time_G, et_abs_Single_Supp_time_G, et_abs_Stride_velocity_G]
             
-            # Réalisation des somprod et obtention de la projection du sujet
-            SP_D = np.sum(Vect_D * cn, axis=0)
-            SP_G = np.sum(Vect_G * cn, axis=0)
+        # Réalisation des somprod et obtention de la projection du sujet
+        SP_D = np.sum(Vect_D * cn, axis=0)
+        SP_G = np.sum(Vect_G * cn, axis=0)
             
-            Diff_Sujet_CTRL_G = (SP_G-Projection_CTRL)
-            Diff_Sujet_CTRL_G2 = abs(Diff_Sujet_CTRL_G)+1
-            Diff_Sujet_CTRL_D = (SP_D-Projection_CTRL);
-            Diff_Sujet_CTRL_D2 = abs(Diff_Sujet_CTRL_D)+1
+        Diff_Sujet_CTRL_G = (SP_G-Projection_CTRL)
+        Diff_Sujet_CTRL_G2 = abs(Diff_Sujet_CTRL_G)+1
+        Diff_Sujet_CTRL_D = (SP_D-Projection_CTRL);
+        Diff_Sujet_CTRL_D2 = abs(Diff_Sujet_CTRL_D)+1
             
-            # Fin et calcul eGVI
-            if Diff_Sujet_CTRL_G < 0 :
-                ln_sujet_G = -np.log(Diff_Sujet_CTRL_G2)
-            else :
-                ln_sujet_G = np.log(Diff_Sujet_CTRL_G2)
+        # Fin et calcul eGVI
+        if Diff_Sujet_CTRL_G < 0 :
+            ln_sujet_G = -np.log(Diff_Sujet_CTRL_G2)
+         else :
+            ln_sujet_G = np.log(Diff_Sujet_CTRL_G2)
             
-            if Diff_Sujet_CTRL_D < 0 :
-                ln_sujet_D = -np.log(Diff_Sujet_CTRL_D2)
-            else :
-                ln_sujet_D = np.log(Diff_Sujet_CTRL_D2)
+        if Diff_Sujet_CTRL_D < 0 :
+            ln_sujet_D = -np.log(Diff_Sujet_CTRL_D2)
+        else :
+            ln_sujet_D = np.log(Diff_Sujet_CTRL_D2)
             
-            # z gauche
-            z_G = []
+        # z gauche
+        z_G = []
             
-            if ln_sujet_G < -m_ln_CTRL :
-                z_G = (ln_sujet_G + m_ln_CTRL) / sd_ln_CTRL
+        if ln_sujet_G < -m_ln_CTRL :
+            z_G = (ln_sujet_G + m_ln_CTRL) / sd_ln_CTRL
             
-            if ln_sujet_G > m_ln_CTRL :
-                z_G = (ln_sujet_G - m_ln_CTRL) / sd_ln_CTRL
+        if ln_sujet_G > m_ln_CTRL :
+            z_G = (ln_sujet_G - m_ln_CTRL) / sd_ln_CTRL
             
-            if -m_ln_CTRL < ln_sujet_G and ln_sujet_G < m_ln_CTRL :
-                z_G = 0
+        if -m_ln_CTRL < ln_sujet_G and ln_sujet_G < m_ln_CTRL :
+            z_G = 0
             
-            # z droit
-            z_D =  []
+        # z droit
+        z_D =  []
             
-            if ln_sujet_D < -m_ln_CTRL :
-                z_D = (ln_sujet_D + m_ln_CTRL) / sd_ln_CTRL
+        if ln_sujet_D < -m_ln_CTRL :
+            z_D = (ln_sujet_D + m_ln_CTRL) / sd_ln_CTRL
             
-            if ln_sujet_D > m_ln_CTRL :
-                z_D = (ln_sujet_D - m_ln_CTRL) / sd_ln_CTRL
+        if ln_sujet_D > m_ln_CTRL :
+            z_D = (ln_sujet_D - m_ln_CTRL) / sd_ln_CTRL
             
-            if -m_ln_CTRL < ln_sujet_D and  ln_sujet_D < m_ln_CTRL :
-                z_D = 0
+        if -m_ln_CTRL < ln_sujet_D and  ln_sujet_D < m_ln_CTRL :
+            z_D = 0
             
-            eGVI_G = 100+z_G
-            eGVI_D = 100+z_D
-            EGVI.append((eGVI_D + eGVI_G)/2)
+        eGVI_G = 100+z_G
+        eGVI_D = 100+z_D
+        EGVI=(eGVI_D + eGVI_G)/2
         
-        EGVItot = np.mean(EGVI)
+        
         st.markdown("### 📊 Résultats du score eGVI")
-        st.write(f"**Score eGVI** : {EGVItot:.2f}")
+        st.write(f"**Score eGVI** : {EGVI:.2f}")
         st.write(f"**Lecture du test** : Un individu présentant une marche saine aura un score compris entre 98 et 102. Tout score en-dehors indique une atteinte à la variabilité de la marche.")
        
     except Exception as e:
