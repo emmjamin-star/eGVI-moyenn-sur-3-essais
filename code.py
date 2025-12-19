@@ -223,44 +223,6 @@ if st.button("Lancer le calcul du score eGVI"):
             Stride_time_G = []
             Stride_velocity_G = []
             Stance_Time_G = []
-            
-            files = ["/BureauR03.c3d", "/BureauR04.c3d", "/BureauR05.c3d"]
-            FS = 100
-            AXE_Y = 1  # Progression
-            AXE_Z = 2  # Hauteur
-            
-            # --- BOUCLE PRINCIPALE SUR LES FICHIERS ---
-            for filename in files:
-                try:
-                    # Chargement du fichier
-                    acq = ezc3d.c3d(filename)
-                    data = acq['data']['points']
-                    labels = acq['parameters']['POINT']['LABELS']['value']
-            
-                    # Récupération des indices
-                    idx_RHEE = labels.index('RHEE')
-                    idx_LHEE = labels.index('LHEE')
-                    idx_RTOE = labels.index('RTOE')
-                    idx_LTOE = labels.index('LTOE')
-            
-                    max_f = data.shape[2]
-                except Exception as e:
-                    print(f"Erreur sur le fichier {filename}: {e}")
-                    continue
-            
-            # --- DÉTECTION DES CYCLES ---
-            z_rhee = data[AXE_Z, idx_RHEE, :]
-            z_lhee = data[AXE_Z, idx_LHEE, :]
-            z_ltoe = data[AXE_Z, idx_LTOE, :]
-        
-            rhs_peaks, _ = find_peaks(-z_rhee, distance=50, prominence=10)
-            lhs_peaks, _ = find_peaks(-z_lhee, distance=50, prominence=10)
-            lto_peaks, _ = find_peaks(-z_ltoe, distance=50, prominence=10)
-        
-            # r_cycles : [(HS_i, HS_j), ...]
-            r_cycles = [(rhs_peaks[k], rhs_peaks[k+1]) for k in range(len(rhs_peaks)-1)]
-            # l_cycles : [(HS_i, HS_j), ...]
-            l_cycles = [(lhs_peaks[k], lhs_peaks[k+1]) for k in range(len(lhs_peaks)-1)]
         
             # lt_cycles : [(HS_G, TO_G), ...] pour le pied gauche
             lt_cycles = []
