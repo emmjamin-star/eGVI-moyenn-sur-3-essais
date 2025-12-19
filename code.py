@@ -50,6 +50,14 @@ if st.button("Lancer le calcul du score eGVI"):
         Stride_time_D = []
         Stride_velocity_D = []
         Stance_Time_D = []
+        Step_lenght_G = []
+        Step_time_G = []
+        Double_Supp_time_G = []
+        Single_Supp_time_G = []
+        Stride_length_G = []
+        Stride_time_G = []
+        Stride_velocity_G = []
+        Stance_Time_G = []
         
         files = [tmp1_path, tmp2_path, tmp3_path]
         FS = 100
