@@ -377,7 +377,7 @@ if st.button("Lancer le calcul du score eGVI"):
         # Fin et calcul eGVI
         if Diff_Sujet_CTRL_G < 0 :
             ln_sujet_G = -np.log(Diff_Sujet_CTRL_G2)
-         else :
+        else :
             ln_sujet_G = np.log(Diff_Sujet_CTRL_G2)
             
         if Diff_Sujet_CTRL_D < 0 :
