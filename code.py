@@ -409,8 +409,8 @@ if st.button("Lancer le calcul du score eGVI"):
         if -m_ln_CTRL < ln_sujet_D and  ln_sujet_D < m_ln_CTRL :
             z_D = 0
             
-        eGVI_G = 100+z_G
-        eGVI_D = 100+z_D
+        eGVI_G = 100+(z_G*10)
+        eGVI_D = 100+(z_D*10)
         EGVI=(eGVI_D + eGVI_G)/2
         
         
