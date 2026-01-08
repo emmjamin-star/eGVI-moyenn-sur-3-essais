@@ -444,7 +444,10 @@ if st.button("Lancer le calcul du score eGVI"):
             s_alpha_sujet = np.dot(coeffs, donnees_sujet)
             diff = s_alpha_sujet - mean_control_s_alpha
             d = abs(diff) + 1
-            ln_d = math.log(d)
+            if d < 0 :
+                ln_d = -(math.log(d))
+            else :
+                ln_d = math.log(d)
             z_score = (ln_d - mean_ln_d_control) / sd_ln_d_control
             egvi = 100 + (10 * z_score)
         
