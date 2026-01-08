@@ -1,7 +1,5 @@
 streamlit
 ezc3d
-os
-math
 numpy
 pandas
 matplotlib
