@@ -14,7 +14,7 @@ st.set_page_config(page_title="Score eGVI", layout="centered")
 st.title("🦿 Score eGVI - Interface interactive")
 
 # 1. Upload des fichiers .c3d
-st.header("1. Importer un ou plusieurs fichiers .c3d dont au moins un fichier d'essai statique et un d'essai dynamique")
+st.header("1. Importer un ou plusieurs fichiers .c3d d'essai statique")
 uploaded_files = st.file_uploader("Choisissez un ou plusieurs fichiers .c3d", type="c3d", accept_multiple_files=True)
 
 if uploaded_files:
