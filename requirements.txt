@@ -1,9 +1,9 @@
 streamlit
 ezc3d
+os
+math
 numpy
 pandas
 matplotlib
 scipy
 scikit-learn
-math
-os
