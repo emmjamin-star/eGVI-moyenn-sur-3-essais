@@ -492,8 +492,8 @@ if st.button("Lancer le calcul du score eGVI"):
         st.markdown("### 📊 Résultats du score eGVI")
         st.write(f"Nombre total de cycles (Approx) : {len(sl_left_arr) + len(sl_right_arr)}")
         st.write(f"**Score eGVI** : {EGVItot:.2f}")
-        st.write(f"**Score eGVI droit** : {egvi_resultat_D:.2f}"
-        st.write(f"**Score eGVI gauche** : {egvi_resultat_G:.2f}"
+        st.write(f"**Score eGVI droit** : {egvi_resultat_D:.2f}")
+        st.write(f"**Score eGVI gauche** : {egvi_resultat_G:.2f}")
         st.write(f"**Lecture du test** : Un individu présentant une marche saine aura un score compris entre 98 et 102. Tout score en-dehors indique une atteinte à la variabilité de la marche.")
        
     except Exception as e:
