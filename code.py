@@ -478,14 +478,9 @@ if st.button("Lancer le calcul du score eGVI"):
             std_StrideVelocityDiff_left   # sd velo
         ]
         
-        print("\n" + "="*40)
-        print(" RÉSULTATS FINAUX EGVI (3 FICHIERS)")
-        print("="*40)
-        
         egvi_resultat_D = calculer_egvi(valeurs_sujet_D)
         egvi_resultat_G = calculer_egvi(valeurs_sujet_G)
         EGVItot = (egvi_resultat_D + egvi_resultat_G)/2
-        
         
         st.markdown("### 📊 Résultats du score eGVI")
         st.write(f"Nombre total de cycles (Approx) : {len(sl_left_arr) + len(sl_right_arr)}")
