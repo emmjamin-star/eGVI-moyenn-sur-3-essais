@@ -49,9 +49,9 @@ if st.button("Lancer le calcul du score eGVI"):
         
         # Indiquez ici vos 3 fichiers C3D
         fichiers_c3d = [
-            "/BureauR03.c3d",
-            "/BureauR04.c3d",  # Exemple nom fichier 2
-            "/BureauR05.c3d"   # Exemple nom fichier 3
+            tmp1_path,
+            tmp2_path,  # Exemple nom fichier 2
+            tmp3_path   # Exemple nom fichier 3
         ]
         
         # Listes Globales pour accumuler les données de tous les fichiers
