@@ -5,3 +5,5 @@ pandas
 matplotlib
 scipy
 scikit-learn
+math
+os
