@@ -484,9 +484,7 @@ if st.button("Lancer le calcul du score eGVI"):
         
         egvi_resultat_D = calculer_egvi(valeurs_sujet_D)
         egvi_resultat_G = calculer_egvi(valeurs_sujet_G)
-        
-        if not np.isnan(egvi_resultat_D) and not np.isnan(egvi_resultat_G):
-            EGVItot = (egvi_resultat_D + egvi_resultat_G)/2
+        EGVItot = (egvi_resultat_D + egvi_resultat_G)/2
         
         
         st.markdown("### 📊 Résultats du score eGVI")
