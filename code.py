@@ -44,146 +44,174 @@ if uploaded_files:
 if st.button("Lancer le calcul du score eGVI"):
     try:
         # ==============================================================================
-        # CONFIGURATION ET LISTE DES FICHIERS
+        # CONFIGURATION : LISTE DES FICHIERS A TRAITER
         # ==============================================================================
-        
-        # Indiquez ici vos 3 fichiers C3D
-        fichiers_c3d = [
+        # Remplacez les chemins ci-dessous par vos 3 fichiers c3d
+        liste_fichiers = [
             tmp1_path,
-            tmp2_path,  # Exemple nom fichier 2
-            tmp3_path   # Exemple nom fichier 3
+            tmp2_path,
+            tmp3_path
         ]
         
-        # Listes Globales pour accumuler les données de tous les fichiers
-        # Step Length
-        GLOBAL_sl_left = []
-        GLOBAL_sl_right = []
-        # Step Time
-        GLOBAL_st_left = []
-        GLOBAL_st_right = []
-        # Stride Velocity
-        GLOBAL_sv_left = []
-        GLOBAL_sv_right = []
-        # Supports
-        GLOBAL_sst_left = []
-        GLOBAL_sst_right = []
-        GLOBAL_dst_left = []
-        GLOBAL_dst_right = []
-        # Stance
-        GLOBAL_stance_left = []
-        GLOBAL_stance_right = []
+        # Dictionnaires pour stocker les "Différences" de tous les fichiers combinés
+        # C'est ce qui servira au calcul final de l'EGVI
+        global_diffs_left = {
+            'StepLen': [], 'StepTime': [], 'StanceTime': [], 'SingleSup': [], 'Velocity': []
+        }
+        global_diffs_right = {
+            'StepLen': [], 'StepTime': [], 'StanceTime': [], 'SingleSup': [], 'Velocity': []
+        }
         
-        # --- FONCTION DÉTECTION TOE OFF (Définie une fois au début) ---
-        def find_toe_offs_from_toes(z_toe_data, cycle_tuples):
-            """
-            Détecte le Toe Off en cherchant quand l'orteil remonte après avoir été au sol.
-            """
+        # ==============================================================================
+        # FONCTIONS UTILITAIRES (Pour alléger la boucle principale)
+        # ==============================================================================
+        
+        def find_toe_offs_from_toes(z_toe_data, cycle_tuples, threshold_clearance=20.0):
+            """ Détecte le Toe Off en cherchant quand l'orteil remonte après avoir été au sol. """
             detected_tos = []
-            threshold_clearance = 20.0 
-            
             for (start_frame, end_frame) in cycle_tuples:
                 z_segment = z_toe_data[start_frame:end_frame]
                 if len(z_segment) == 0: continue
-        
-                # 1. Trouver le min global dans le cycle
                 idx_min = np.argmin(z_segment)
                 min_val = z_segment[idx_min]
-                
-                # 2. Chercher quand ça remonte au-dessus du seuil APRES ce minimum
                 post_min_segment = z_segment[idx_min:]
                 candidates = np.where(post_min_segment > (min_val + threshold_clearance))[0]
-                
                 if len(candidates) > 0:
                     to_frame = start_frame + idx_min + candidates[0]
                     detected_tos.append(to_frame)
-                    
             return detected_tos
         
-        # --- FONCTION CALCUL STRIDE ---
-        def process_strides(cycles, marker_idx, points_data, freq, axis):
-            times = []
-            lengths = []
-            velocities = []
-            
-            for (start_frame, end_frame) in cycles:
-                duration_frames = end_frame - start_frame
-                cycle_time_s = duration_frames / freq
-                
-                pos_start = points_data[axis, marker_idx, start_frame]
-                pos_end = points_data[axis, marker_idx, end_frame]
-                cycle_len_mm = abs(pos_end - pos_start)
-                
-                if cycle_time_s > 0:
-                    vel_mms = cycle_len_mm / cycle_time_s
-                else:
-                    vel_mms = 0
-                    
-                times.append(cycle_time_s)
-                lengths.append(cycle_len_mm)
-                velocities.append(vel_mms)
-                
-            return times, lengths, velocities
+        def calculate_diffs(raw_values, normalization_mean=None):
+            """
+            Calcule les différences absolues entre pas consécutifs normalisés.
+            Respecte la logique de votre script : ((valeur/facteur)/moyenne*100)
+            """
+            if len(raw_values) < 2:
+                return []
+        
+            arr = np.array(raw_values)
+        
+            # Si la moyenne n'est pas fournie, on utilise la moyenne locale
+            if normalization_mean is None:
+                normalization_mean = np.mean(arr)
+        
+            normalized_p = []
+            diffs = []
+        
+            # Note: Votre script divise StepLength par 10, mais pas Time/Stance/Single.
+            # Pour généraliser, on assume que raw_values est déjà dans la bonne unité
+            # ou que la division par 10 se fait AVANT l'appel pour StepLength.
+            # Cependant, pour respecter STRICTEMENT votre boucle :
+            # StepLenPleft.append((i/10)/np.mean(step_lengths_left)*100)
+            # Je vais traiter la division par 10 à l'extérieur pour StepLength.
+        
+            for val in arr:
+                normalized_p.append((val) / normalization_mean * 100)
+        
+            for i in range(len(normalized_p) - 1):
+                diff = abs(normalized_p[i+1] - normalized_p[i])
+                diffs.append(diff)
+        
+            return diffs
         
         # ==============================================================================
-        # BOUCLE DE TRAITEMENT SUR LES 3 FICHIERS
+        # BOUCLE PRINCIPALE SUR LES FICHIERS
         # ==============================================================================
         
-        for fichier in fichiers_c3d:
-            print(f"Traitement du fichier : {fichier} ...")
-            
+        print(f"Début du traitement de {len(liste_fichiers)} fichiers...")
+        
+        for fichier in liste_fichiers:
             if not os.path.exists(fichier):
-                print(f"  ATTENTION: Fichier {fichier} introuvable. Passé.")
+                print(f"ATTENTION : Fichier introuvable {fichier}, passage au suivant.")
                 continue
         
-            # Chargement
+            print(f"\nTraitement du fichier : {fichier}")
+        
+            # 1. Chargement
             acq1 = ezc3d.c3d(fichier)
             labels = acq1['parameters']['POINT']['LABELS']['value']
             freq = acq1['header']['points']['frame_rate']
             points = acq1['data']['points']
-            
-            # ------------------------------------------------------------------
-            # 1. DÉTECTION EVENTS (Heel Strikes)
-            # ------------------------------------------------------------------
-            
-            # GAUCHE (LHEE)
+        
+            # Paramètres de base
+            axis_ap = 0 # Axe de progression (X)
+        
+            # 2. Détection Cycles (LHEE / RHEE)
             lhee_valid_cycles = []
+            rhee_valid_cycles = []
             lhee_cycle_start_indices = []
+            rhee_cycle_start_indices = []
+        
+            # --- GAUCHE ---
             if "LHEE" in labels:
                 idx_lhee = labels.index("LHEE")
                 z_lhee = points[2, idx_lhee, :]
                 inverted_z = -z_lhee
                 min_distance = int(freq * 0.8)
-                peaks, _ = find_peaks(inverted_z, distance = min_distance, prominence = 1)
-                
+                peaks, _ = find_peaks(inverted_z, distance=min_distance, prominence=1)
                 lhee_cycle_start_indices = peaks[:-1]
                 lhee_cycle_end_indices = peaks[1:]
                 min_lhee_cycle_duration = int(0.5 * freq)
                 lhee_valid_cycles = [
-                  (start, end) for start, end in zip(lhee_cycle_start_indices, lhee_cycle_end_indices)
-                  if (end - start) >= min_lhee_cycle_duration
+                    (start, end) for start, end in zip(lhee_cycle_start_indices, lhee_cycle_end_indices)
+                    if (end - start) >= min_lhee_cycle_duration
                 ]
         
-            # DROITE (RHEE)
-            rhee_valid_cycles = []
-            rhee_cycle_start_indices = []
+            # --- DROITE ---
             if "RHEE" in labels:
                 idx_rhee = labels.index("RHEE")
                 z_rhee = points[2, idx_rhee, :]
                 inverted_z = -z_rhee
                 min_distance = int(freq * 0.8)
-                peaks, _ = find_peaks(inverted_z, distance = min_distance, prominence = 1)
-                
+                peaks, _ = find_peaks(inverted_z, distance=min_distance, prominence=1)
                 rhee_cycle_start_indices = peaks[:-1]
                 rhee_cycle_end_indices = peaks[1:]
                 min_rhee_cycle_duration = int(0.5 * freq)
                 rhee_valid_cycles = [
-                  (start, end) for start, end in zip(rhee_cycle_start_indices, rhee_cycle_end_indices)
-                  if (end - start) >= min_rhee_cycle_duration
+                    (start, end) for start, end in zip(rhee_cycle_start_indices, rhee_cycle_end_indices)
+                    if (end - start) >= min_rhee_cycle_duration
                 ]
         
-            # ------------------------------------------------------------------
-            # 2. DÉTECTION TOE OFFS (LTOE / RTOE)
-            # ------------------------------------------------------------------
+            # 3. Calcul Step Length (Séparé)
+            step_lengths_left = []
+            step_lengths_right = []
+        
+            all_events = []
+            for frame in lhee_cycle_start_indices: all_events.append((frame, 'Left'))
+            for frame in rhee_cycle_start_indices: all_events.append((frame, 'Right'))
+            all_events.sort(key=lambda x: x[0])
+        
+            if "LHEE" in labels and "RHEE" in labels:
+                idx_lhee = labels.index("LHEE")
+                idx_rhee = labels.index("RHEE")
+        
+                for i in range(1, len(all_events)):
+                    current_frame, current_side = all_events[i]
+                    prev_frame, prev_side = all_events[i-1]
+        
+                    if current_side != prev_side:
+                        pos_lhee = points[axis_ap, idx_lhee, current_frame]
+                        pos_rhee = points[axis_ap, idx_rhee, current_frame]
+                        step_len = abs(pos_lhee - pos_rhee)/10 # Division par 10 conservée
+        
+                        if current_side == 'Left': step_lengths_left.append(step_len)
+                        else: step_lengths_right.append(step_len)
+        
+            # 4. Calcul Step Time
+            step_times_left = []
+            step_times_right = []
+        
+            # On réutilise all_events
+            for i in range(1, len(all_events)):
+                current_frame, current_side = all_events[i]
+                prev_frame, prev_side = all_events[i-1]
+        
+                if current_side != prev_side:
+                    step_time_seconds = (current_frame - prev_frame) / freq
+                    if current_side == 'Left': step_times_left.append(step_time_seconds)
+                    else: step_times_right.append(step_time_seconds)
+        
+            # 5. Détection Toe Offs (LTOE / RTOE)
             lhee_toe_offs = []
             rhee_toe_offs = []
         
@@ -197,290 +225,184 @@ if st.button("Lancer le calcul du score eGVI"):
                 z_rtoe = points[2, idx_rtoe, :]
                 rhee_toe_offs = find_toe_offs_from_toes(z_rtoe, rhee_valid_cycles)
         
-            # ------------------------------------------------------------------
-            # 3. CALCUL STEP LENGTH & STEP TIME (Logique alternée)
-            # ------------------------------------------------------------------
-            axis_ap = 1 
-            all_events = []
+            # 6. Single Support & Stance Time
+            sst_left, sst_right = [], []
+            stance_time_left, stance_time_right = [], []
         
-            # Consolidation events pour ce fichier
-            for frame in lhee_cycle_start_indices:
-                all_events.append((frame, 'Left'))
-            for frame in rhee_cycle_start_indices:
-                all_events.append((frame, 'Right'))
-            all_events.sort(key=lambda x: x[0])
-        
-            if "LHEE" in labels and "RHEE" in labels:
-                idx_lhee = labels.index("LHEE")
-                idx_rhee = labels.index("RHEE")
-        
-                for i in range(1, len(all_events)):
-                    current_frame, current_side = all_events[i]
-                    prev_frame, prev_side = all_events[i-1]
-        
-                    if current_side != prev_side:
-                        # --- Step Length ---
-                        pos_lhee = points[axis_ap, idx_lhee, current_frame]
-                        pos_rhee = points[axis_ap, idx_rhee, current_frame]
-                        step_len = abs(pos_lhee - pos_rhee)
-        
-                        # --- Step Time ---
-                        delta_frames = current_frame - prev_frame
-                        step_time_s = delta_frames / freq
-        
-                        # Stockage dans les listes globales
-                        if current_side == 'Left':
-                            GLOBAL_sl_left.append(step_len)
-                            GLOBAL_st_left.append(step_time_s)
-                        else:
-                            GLOBAL_sl_right.append(step_len)
-                            GLOBAL_st_right.append(step_time_s)
-        
-            # ------------------------------------------------------------------
-            # 4. CALCUL STRIDE VELOCITY
-            # ------------------------------------------------------------------
-            if len(lhee_valid_cycles) > 0:
-                _, _, v = process_strides(lhee_valid_cycles, idx_lhee, points, freq, axis_ap)
-                GLOBAL_sv_left.extend(v)
-        
-            if len(rhee_valid_cycles) > 0:
-                _, _, v = process_strides(rhee_valid_cycles, idx_rhee, points, freq, axis_ap)
-                GLOBAL_sv_right.extend(v)
-        
-            # ------------------------------------------------------------------
-            # 5. CALCUL TEMPS D'APPUI (Single/Double/Stance)
-            # ------------------------------------------------------------------
             l_starts = [x[0] for x in lhee_valid_cycles]
             r_starts = [x[0] for x in rhee_valid_cycles]
         
-            # --- Single Support & Double Support ---
-            # SST GAUCHE & DST GAUCHE (Basé sur les cycles)
-            for ic_frame in l_starts: # Cycles commençant par gauche
-                # Double Support Gauche
-                next_tos = [to for to in rhee_toe_offs if to > ic_frame]
+            # SST & Stance GAUCHE
+            for ic_frame in l_starts: # Stance starts at IC Left
+                next_tos = [to for to in lhee_toe_offs if to > ic_frame]
                 if next_tos:
                     to_frame = next_tos[0]
-                    if (to_frame - ic_frame) < (0.5 * freq):
-                        GLOBAL_dst_left.append((to_frame - ic_frame) / freq)
-            
-            for to_frame in rhee_toe_offs:
-                # Single Support Gauche (Swing droit)
+                    if (to_frame - ic_frame) < (2.0 * freq):
+                        stance_time_left.append((to_frame - ic_frame) / freq)
+        
+            for to_frame in rhee_toe_offs: # SST Left starts at TO Right
                 next_ics = [ic for ic in r_starts if ic > to_frame]
                 if next_ics:
                     next_ic = next_ics[0]
                     if (next_ic - to_frame) < (1.5 * freq):
-                        GLOBAL_sst_left.append((next_ic - to_frame) / freq)
+                        sst_left.append((next_ic - to_frame) / freq)
         
-            # SST DROIT & DST DROIT
-            for ic_frame in r_starts:
-                # Double Support Droit
-                next_tos = [to for to in lhee_toe_offs if to > ic_frame]
-                if next_tos:
-                    to_frame = next_tos[0]
-                    if (to_frame - ic_frame) < (0.5 * freq):
-                        GLOBAL_dst_right.append((to_frame - ic_frame) / freq)
-        
-            for to_frame in lhee_toe_offs:
-                # Single Support Droit (Swing gauche)
-                next_ics = [ic for ic in l_starts if ic > to_frame]
-                if next_ics:
-                    next_ic = next_ics[0]
-                    if (next_ic - to_frame) < (1.5 * freq):
-                        GLOBAL_sst_right.append((next_ic - to_frame) / freq)
-        
-            # --- Stance Time ---
-            # GAUCHE
-            for ic_frame in l_starts:
-                next_tos = [to for to in lhee_toe_offs if to > ic_frame]
-                if next_tos:
-                    to_frame = next_tos[0]
-                    if (to_frame - ic_frame) < (2.0 * freq):
-                        GLOBAL_stance_left.append((to_frame - ic_frame) / freq)
-            
-            # DROITE
-            for ic_frame in r_starts:
+            # SST & Stance DROIT
+            for ic_frame in r_starts: # Stance starts at IC Right
                 next_tos = [to for to in rhee_toe_offs if to > ic_frame]
                 if next_tos:
                     to_frame = next_tos[0]
                     if (to_frame - ic_frame) < (2.0 * freq):
-                        GLOBAL_stance_right.append((to_frame - ic_frame) / freq)
+                        stance_time_right.append((to_frame - ic_frame) / freq)
         
-        # Fin de la boucle sur les fichiers
-        print("Traitement de tous les fichiers terminé.")
+            for to_frame in lhee_toe_offs: # SST Right starts at TO Left
+                next_ics = [ic for ic in l_starts if ic > to_frame]
+                if next_ics:
+                    next_ic = next_ics[0]
+                    if (next_ic - to_frame) < (1.5 * freq):
+                        sst_right.append((next_ic - to_frame) / freq)
         
-        # ==============================================================================
-        # CONVERSION EN ARRAYS NUMPY (Données consolidées)
-        # ==============================================================================
+            # 7. Velocity (via Stride)
+            velocity_left = []
+            velocity_right = []
         
-        # Step Length
-        sl_left_arr = np.array(GLOBAL_sl_left)
-        sl_right_arr = np.array(GLOBAL_sl_right)
+            def get_velocity(cycles, marker_idx):
+                vels = []
+                for (start, end) in cycles:
+                    dur = (end - start) / freq
+                    p_start = points[axis_ap, marker_idx, start]
+                    p_end = points[axis_ap, marker_idx, end]
+                    dist = abs(p_end - p_start)/10
+                    if dur > 0: vels.append(dist/dur)
+                return vels
         
-        # Step Time
-        st_left_arr = np.array(GLOBAL_st_left)
-        st_right_arr = np.array(GLOBAL_st_right)
-        
-        # Velocity
-        sv_left_arr = np.array(GLOBAL_sv_left)
-        sv_right_arr = np.array(GLOBAL_sv_right)
-        
-        # Supports
-        sst_left = np.array(GLOBAL_sst_left)
-        sst_right = np.array(GLOBAL_sst_right)
-        dst_left = np.array(GLOBAL_dst_left)
-        dst_right = np.array(GLOBAL_dst_right)
-        stance_time_left = np.array(GLOBAL_stance_left)
-        stance_time_right = np.array(GLOBAL_stance_right)
+            if len(lhee_valid_cycles) > 0 and "LHEE" in labels:
+                velocity_left = get_velocity(lhee_valid_cycles, idx_lhee)
+            if len(rhee_valid_cycles) > 0 and "RHEE" in labels:
+                velocity_right = get_velocity(rhee_valid_cycles, idx_rhee)
         
         
-        # ==============================================================================
-        # CALCUL DES PARAMÈTRES EGVI (Moyennes, Normalisation, Différences)
-        # ==============================================================================
+            # ==========================================================================
+            # AGGRÉGATION DES DIFFÉRENCES (Le cœur de l'EGVI Multi-fichier)
+            # ==========================================================================
+            # On calcule les diffs POUR CE FICHIER et on les ajoute à la liste globale.
+            # On normalise par la moyenne DE CE FICHIER (standard pour éviter les sauts d'offset entre fichiers)
+            # Note : Pour StepLength, vos valeurs brutes sont déjà divisées par 10 dans 'step_lengths_left'
+            # Mais dans votre script original, vous refaites (i/10) lors du calcul de diff.
+            # ATTENTION : Dans mon bloc 3 ci-dessus, j'ai déjà divisé par 10 (step_len = ... / 10).
+            # Donc ici, je passe les valeurs telles quelles, MAIS je dois gérer la division supplémentaire si votre logique l'exige.
+            # Votre script : StepLenPleft.append((i/10)/mean*100). Or 'i' venait de step_lengths_left qui avait déjà /10 ?
+            # Vérifions votre script :
+            #   Bloc 4 : step_len = abs(...)/10. -> step_lengths_left contient des cm.
+            #   Bloc Resultats : StepLenPleft.append((i/10)/mean*100). -> Vous redivisez par 10 ?
+            #   Cela semble être une erreur potentielle dans le script original ou une conversion mm->cm->dm ?
+            #   Je vais RESPECTER LA LOGIQUE ECRITE : Je vais diviser par 10 les valeurs entrantes pour StepLength.
         
-        def calculate_egvi_components(data_array, name, is_length_cm_conversion=False):
-            """
-            Fonction générique pour calculer la moyenne et la variabilité (SD Diff)
-            selon la logique stricte du script original.
-            """
-            if len(data_array) == 0:
-                return np.nan, np.nan, np.nan # Mean, MeanDiff, StdDiff
+            # --- GAUCHE ---
+            # 1. Step Length (avec la re-division par 10 spécifique à votre script)
+            sl_l_processed = [x/10 for x in step_lengths_left]
+            global_diffs_left['StepLen'].extend(calculate_diffs(sl_l_processed))
         
-            # 1. Calcul Moyenne brute (pour normalisation)
-            # Attention: pour step length le script original divise par 10 (mm->cm ?) à l'affichage
-            # Mais pour l'EGVI la normalisation se fait par la moyenne du dataset
-            mean_val = np.mean(data_array)
+            # 2. Step Time
+            global_diffs_left['StepTime'].extend(calculate_diffs(step_times_left))
         
-            # 2. Normalisation (P = val / mean)
-            P_list = []
-            for val in data_array:
-                P_list.append(val / mean_val)
-            
-            # 3. Différences successives (|Pn+1 - Pn|)
-            Diff_list = []
-            for i in range(len(P_list) - 1):
-                valeur = abs(P_list[i+1] - P_list[i])
-                Diff_list.append(valeur)
-            
-            # 4. Stats sur les différences
-            if len(Diff_list) > 0:
-                mean_diff = np.mean(Diff_list)
-                std_diff = np.std(Diff_list, ddof=1)
-            else:
-                mean_diff = np.nan
-                std_diff = np.nan
-                
-            return mean_val, mean_diff, std_diff
+            # 3. Stance Time
+            global_diffs_left['StanceTime'].extend(calculate_diffs(stance_time_left))
         
-        # --- APPLIQUER LES CALCULS ---
+            # 4. Single Support
+            global_diffs_left['SingleSup'].extend(calculate_diffs(sst_left))
         
-        # 1. Step Length (Attention unité mm dans c3d -> division par 10 si besoin de cm pour l'affichage, mais EGVI use ratios)
-        # Dans le script original, "mean_l" servait à l'affichage (/10).
-        # Ici on stocke les valeurs normalisées pour l'EGVI.
+            # 5. Velocity
+            global_diffs_left['Velocity'].extend(calculate_diffs(velocity_left))
         
-        # GAUCHE
-        raw_mean_sl_l, mean_StepLenDiff_left, std_StepLenDiff_left = calculate_egvi_components(sl_left_arr, "SL Left")
-        # DROITE
-        raw_mean_sl_r, mean_StepLenDiff_right, std_StepLenDiff_right = calculate_egvi_components(sl_right_arr, "SL Right")
         
-        # 2. Step Time
-        # GAUCHE
-        raw_mean_st_l, mean_StepTimeDiff_left, std_StepTimeDiff_left = calculate_egvi_components(st_left_arr, "ST Left")
-        # DROITE
-        raw_mean_st_r, mean_StepTimeDiff_right, std_StepTimeDiff_right = calculate_egvi_components(st_right_arr, "ST Right")
+            # --- DROITE ---
+            # 1. Step Length
+            sl_r_processed = [x/10 for x in step_lengths_right]
+            global_diffs_right['StepLen'].extend(calculate_diffs(sl_r_processed))
         
-        # 3. Velocity
-        # GAUCHE
-        raw_mean_sv_l, mean_StrideVelocityDiff_left, std_StrideVelocityDiff_left = calculate_egvi_components(sv_left_arr, "Vel Left")
-        # DROITE
-        raw_mean_sv_r, mean_StrideVelocityDiff_right, std_StrideVelocityDiff_right = calculate_egvi_components(sv_right_arr, "Vel Right")
+            # 2. Step Time
+            global_diffs_right['StepTime'].extend(calculate_diffs(step_times_right))
         
-        # 4. Single Support
-        # GAUCHE
-        raw_mean_ss_l, mean_SingleSupDiff_left, std_SingleSupDiff_left = calculate_egvi_components(sst_left, "SST Left")
-        # DROITE
-        raw_mean_ss_r, mean_SingleSupDiff_right, std_SingleSupDiff_right = calculate_egvi_components(sst_right, "SST Right")
+            # 3. Stance Time
+            global_diffs_right['StanceTime'].extend(calculate_diffs(stance_time_right))
         
-        # 5. Stance Time
-        # GAUCHE
-        raw_mean_stance_l, mean_StanceTimeDiff_left, std_StanceTimeDiff_left = calculate_egvi_components(stance_time_left, "Stance Left")
-        # DROITE
-        raw_mean_stance_r, mean_StanceTimeDiff_right, std_StanceTimeDiff_right = calculate_egvi_components(stance_time_right, "Stance Right")
+            # 4. Single Support
+            global_diffs_right['SingleSup'].extend(calculate_diffs(sst_right))
         
+            # 5. Velocity
+            global_diffs_right['Velocity'].extend(calculate_diffs(velocity_right))
+        
+            print(f"  -> Cycles extraits (G/D) : {len(lhee_valid_cycles)} / {len(rhee_valid_cycles)}")
+        
+        print("\n" + "="*30)
+        print(" CALCUL GLOBAL EGVI (Tous fichiers)")
+        print("="*30)
         
         # ==============================================================================
         # CALCUL FINAL EGVI
         # ==============================================================================
         
         def calculer_egvi(donnees_sujet):
-            # 1. Coefficients (cn) extraits du fichier GVI calculation.csv
-            coeffs = np.array([
-                0.80,  # m step l
-                0.93,  # m step t
-                0.92,  # m stance
-                0.90,  # m single
-                0.89,  # m velo
-                0.73,  # sd step l
-                0.82,  # sd step t
-                0.85,  # sd stance
-                0.86,  # sd single
-                0.90   # sd velo
-            ])
-        
-            # 2. Paramètres de référence du groupe de Contrôle
+            # Coefficients (cn) - Arnaud Gouelle
+            coeffs = np.array([0.80, 0.93, 0.92, 0.90, 0.89, 0.73, 0.82, 0.85, 0.86, 0.90])
             mean_control_s_alpha = 20.37541132570365
             mean_ln_d_control = 1.3865728033714733
             sd_ln_d_control = 0.6193340454665202
         
-            # Validation
             if len(donnees_sujet) != 10:
-                print("Erreur : Pas assez de données pour le calcul (nan detecté ?)")
-                return np.nan
+                return 0.0 # Erreur
         
-            if np.isnan(donnees_sujet).any():
-                print("Attention : Des valeurs NaN sont présentes dans les données sujet.")
-                return np.nan
+            # Gestion des NaN si pas assez de données
+            donnees_propres = [0.0 if np.isnan(x) else x for x in donnees_sujet]
         
-            # Calcul
-            s_alpha_sujet = np.dot(coeffs, donnees_sujet)
+            s_alpha_sujet = np.dot(coeffs, donnees_propres)
             diff = s_alpha_sujet - mean_control_s_alpha
             d = abs(diff) + 1
-            if d < 0 :
-                ln_d = -(math.log(d))
-            else :
-                ln_d = math.log(d)
+        
+            if d < 0: ln_d = -(math.log(d))
+            else: ln_d = math.log(d)
+        
             z_score = (ln_d - mean_ln_d_control) / sd_ln_d_control
             egvi = 100 + (10 * z_score)
-        
             return egvi
         
-        # Assemblage des vecteurs pour l'EGVI
+        # Fonction pour obtenir Moyenne et SD des listes de différences accumulées
+        def get_stats_from_diffs(diff_list):
+            arr = np.array(diff_list)
+            if len(arr) == 0: return 0.0, 0.0
+            return np.mean(arr), np.std(arr, ddof=1)
+        
+        # --- Construction du vecteur pour EGVI ---
+        # Rappel de votre structure :
+        # [ Mean_StepLenDiff*10, Mean_StepTimeDiff, Mean_StanceDiff, Mean_SingleDiff, Mean_VeloDiff,
+        #   SD_StepLenDiff*10,   SD_StepTimeDiff,   SD_StanceDiff,   SD_SingleDiff,   SD_VeloDiff ]
+        
+        # DROITE
+        m_sl_r, sd_sl_r = get_stats_from_diffs(global_diffs_right['StepLen'])
+        m_st_r, sd_st_r = get_stats_from_diffs(global_diffs_right['StepTime'])
+        m_sta_r, sd_sta_r = get_stats_from_diffs(global_diffs_right['StanceTime'])
+        m_ss_r, sd_ss_r = get_stats_from_diffs(global_diffs_right['SingleSup'])
+        m_vel_r, sd_vel_r = get_stats_from_diffs(global_diffs_right['Velocity'])
         
         valeurs_sujet_D = [
-            mean_StepLenDiff_right,   # m step l
-            mean_StepTimeDiff_right,  # m step t
-            mean_StanceTimeDiff_right, # m stance
-            mean_SingleSupDiff_right,  # m single
-            mean_StrideVelocityDiff_right, # m velo
-            std_StepLenDiff_right,    # sd step l
-            std_StepTimeDiff_right,   # sd step t
-            std_StanceTimeDiff_right,  # sd stance
-            std_SingleSupDiff_right,   # sd single
-            std_StrideVelocityDiff_right   # sd velo
+            m_sl_r,  m_st_r,  m_sta_r,  m_ss_r,  m_vel_r,
+            sd_sl_r, sd_st_r, sd_sta_r, sd_ss_r, sd_vel_r
         ]
+        
+        # GAUCHE
+        m_sl_l, sd_sl_l = get_stats_from_diffs(global_diffs_left['StepLen'])
+        m_st_l, sd_st_l = get_stats_from_diffs(global_diffs_left['StepTime'])
+        m_sta_l, sd_sta_l = get_stats_from_diffs(global_diffs_left['StanceTime'])
+        m_ss_l, sd_ss_l = get_stats_from_diffs(global_diffs_left['SingleSup'])
+        m_vel_l, sd_vel_l = get_stats_from_diffs(global_diffs_left['Velocity'])
         
         valeurs_sujet_G = [
-            mean_StepLenDiff_left,   # m step l
-            mean_StepTimeDiff_left,  # m step t
-            mean_StanceTimeDiff_left, # m stance
-            mean_SingleSupDiff_left,  # m single
-            mean_StrideVelocityDiff_left, # m velo
-            std_StepLenDiff_left,    # sd step l
-            std_StepTimeDiff_left,   # sd step t
-            std_StanceTimeDiff_left,  # sd stance
-            std_SingleSupDiff_left,   # sd single
-            std_StrideVelocityDiff_left   # sd velo
+            m_sl_l,  m_st_l,  m_sta_l,  m_ss_l,  m_vel_l,
+            sd_sl_l, sd_st_l, sd_sta_l, sd_ss_l, sd_vel_l
         ]
         
+        # Calcul Final
         egvi_resultat_D = calculer_egvi(valeurs_sujet_D)
         egvi_resultat_G = calculer_egvi(valeurs_sujet_G)
         EGVItot = (egvi_resultat_D + egvi_resultat_G)/2
