@@ -408,7 +408,7 @@ if st.button("Lancer le calcul du score eGVI"):
         EGVItot = (egvi_resultat_D + egvi_resultat_G)/2
         
         st.markdown("### 📊 Résultats du score eGVI")
-        st.write(f"Nombre total de cycles (Approx) : {len(sl_left_arr) + len(sl_right_arr)}")
+        st.write(f"Nombre total de cycles (Approx) : {len(global_diffs_left['StepLen'])} + {len(global_diffs_right['StepLen'])}")
         st.write(f"**Score eGVI** : {EGVItot:.2f}")
         st.write(f"**Score eGVI droit** : {egvi_resultat_D:.2f}")
         st.write(f"**Score eGVI gauche** : {egvi_resultat_G:.2f}")
