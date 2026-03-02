@@ -376,8 +376,7 @@ if st.button("Lancer le calcul du score eGVI"):
         st.write(f"Score EGVI Gauche : {egvi_resultat_G:.2f}")
         st.write(f"Score EGVI Droit  : {egvi_resultat_D:.2f}")
         st.write(f"Score EGVI Global : {EGVItot:.2f}")
-        st.write(f"**Lecture du test** : Un individu présentant une marche saine aura un score compris entre 95 et 105. Tout score en-dehors indique une atteinte à la variabilité de la marche.
-        Une trop grande variabilité en cas de score supérieur à 105 et une manque de variabilitée en cas de score inférieur à 95.")
+        st.write(f"**Lecture du test** : Un individu présentant une marche saine aura un score compris entre 95 et 105. Tout score en-dehors indique une atteinte à la variabilité de la marche.")
        
     except Exception as e:
         st.error(f"Erreur pendant l'analyse : {e}")
